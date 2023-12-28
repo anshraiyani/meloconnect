@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "scheme": "meloconnect.ansh",
+    "name": "meloconnect",
+    "slug": "meloconnect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.anshraiyani13.meloconnect"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c85517a8-336c-47aa-81e4-ce912da5bbf1"
+      }
+    }
+  }
+}
