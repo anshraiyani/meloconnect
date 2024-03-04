@@ -51,6 +51,7 @@ const Profile = () => {
           {spotifyUser.topArtists.map((el) => (
             <View
               style={{ flexDirection: "row", alignItems: "center", margin: 6 }}
+              key={el.artist_name}
             >
               <Image
                 style={{ height: 40, width: 40 }}

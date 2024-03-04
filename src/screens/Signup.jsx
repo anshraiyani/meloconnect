@@ -40,7 +40,7 @@ const Signup = ({ navigation }) => {
       const userCollections = collection(firestore_db, "users");
       const userDocRef = doc(userCollections, user.uid);
       await setDoc(userDocRef, {
-        access: "",
+        access_token: "",
       });
     } catch (err) {
       console.log("Error:", err.code);
