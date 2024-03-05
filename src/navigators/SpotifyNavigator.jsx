@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import SpotifyConnect from "../screens/SpotifyConnect";
 import { collection, doc, getDoc } from "firebase/firestore";
-import { Text } from "react-native";
 import { firestore_db } from "../../firebase";
 import Profile from "../screens/Profile";
+import Splash from "../screens/Splash";
+import MainNavigator from "./MainNavigator";
 
 const SpotifyNavigator = ({ user }) => {
   const [token, setToken] = useState(false);
@@ -14,7 +15,7 @@ const SpotifyNavigator = ({ user }) => {
     const userDocRef = doc(userCollections, user.uid);
     const userDocSnapshot = await getDoc(userDocRef);
     if (userDocSnapshot.exists()) {
-      const {access_token} = userDocSnapshot.data();
+      const { access_token } = userDocSnapshot.data();
 
       if (access_token) {
         setToken(true);
@@ -32,7 +33,13 @@ const SpotifyNavigator = ({ user }) => {
 
   return (
     <>
-      {loading ? <Text>Loading</Text> : token ? <Profile /> : <SpotifyConnect setToken={setToken}/>}
+      {loading ? (
+        <Splash />
+      ) : token ? (
+        <MainNavigator />
+      ) : (
+        <SpotifyConnect setToken={setToken} />
+      )}
     </>
   );
 };

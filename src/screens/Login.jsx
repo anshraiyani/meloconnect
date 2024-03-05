@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Pressable,
@@ -18,9 +18,9 @@ const Login = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const auth = getAuth(app);
-      const response=await signInWithEmailAndPassword(auth, email, password);
+      const response = await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 

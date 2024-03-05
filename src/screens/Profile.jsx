@@ -1,11 +1,28 @@
 import app, { firestore_db } from "../../firebase";
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { getAuth, signOut } from "firebase/auth";
 import axios from "axios";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import * as Clipboard from "expo-clipboard";
+import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
+
 const Profile = () => {
   const [spotifyUser, setSpotifyUser] = useState(null);
+
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(spotifyUser.uid);
+  };
 
   const getUser = async () => {
     const auth = getAuth(app);
@@ -22,6 +39,22 @@ const Profile = () => {
     getUser();
   }, []);
 
+  const [fontsLoaded] = useFonts({
+    HeroLg: require("../assets/fonts/Hero-Light.ttf"),
+    HeroRg: require("../assets/fonts/Hero-Regular.ttf"),
+    HeroBd: require("../assets/fonts/Hero-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   const handleSignout = async () => {
     try {
       const auth = getAuth(app);
@@ -32,52 +65,145 @@ const Profile = () => {
   };
 
   return (
-    <ScrollView>
+    <>
+      {/* <StatusBar style="auto" /> */}
       {spotifyUser && (
-        <View
+        <SafeAreaView
           style={{
-            justifyContent: "center",
-            alignItems: "center",
             height: "100%",
-            padding: 50,
+            width: "100%",
+            backgroundColor: "#101010",
+            padding: 10,
           }}
         >
-          <Text>{spotifyUser.spotify_display_name}</Text>
-          <Text>{spotifyUser.email}</Text>
-          <Image
-            style={{ height: 50, width: 50 }}
-            source={{ uri: spotifyUser.profile_image }}
-          />
-          {spotifyUser.topArtists.map((el) => (
-            <View
-              style={{ flexDirection: "row", alignItems: "center", margin: 6 }}
-              key={el.artist_name}
-            >
-              <Image
-                style={{ height: 40, width: 40 }}
-                source={{ uri: el.image_url }}
-              />
-              <Text>{el.artist_name}</Text>
-            </View>
-          ))}
-          <TouchableOpacity
-            style={{ backgroundColor: "#4DED75", padding: 10, borderRadius: 7 }}
-            onPress={() => handleSignout()}
-          >
+          <View style={{ paddingHorizontal: 5 }}>
             <Text
+              style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}
+            >
+              Profile
+            </Text>
+          </View>
+          <View style={{ backgroundColor: "#404040", height: 2 }}></View>
+          <View style={{ width: "100%", height: "100%" }}>
+            <View
               style={{
-                color: "white",
-                fontSize: 20,
-                color: "black",
-                fontWeight: "600",
+                padding: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
               }}
             >
-              Sign out
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Image
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 100,
+                  borderColor: "#d24dff",
+                  borderWidth: 2,
+                }}
+                source={{ uri: spotifyUser.profile_image }}
+              />
+              <View style={{ gap: 5 }}>
+                <Text
+                  style={{ color: "white", fontSize: 25, fontFamily: "HeroRg" }}
+                >
+                  {spotifyUser.spotify_display_name}
+                </Text>
+                <Text
+                  style={{
+                    color: "#909090",
+                    fontSize: 20,
+                    fontFamily: "HeroRg",
+                  }}
+                >
+                  {spotifyUser.email}
+                </Text>
+                <View
+                  style={{
+                    backgroundColor: "#d24dff",
+                    width: "50%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
+                    paddingVertical: 2,
+                    paddingHorizontal: 5,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={copyToClipboard}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-evenly",
+                      width: "100%",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "black",
+                        fontSize: 20,
+                        fontFamily: "HeroBd",
+                      }}
+                    >
+                      COPY ID
+                    </Text>
+                    <AntDesign name="copy1" size={17} color="white" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={{ padding: 5, marginVertical: 10 }}>
+              <Text
+                style={{ color: "white", fontFamily: "HeroBd", fontSize: 25 }}
+              >
+                Top Artists
+              </Text>
+              <ScrollView
+                contentContainerStyle={{
+                  gap: 10,
+                  paddingHorizontal: 50,
+                  paddingBottom: 200,
+                  paddingTop: 10,
+                }}
+              >
+                {spotifyUser.topArtists.map((el, idx) => {
+                  return (
+                    <View
+                      key={el.artist_name}
+                      style={{
+                        backgroundColor: "#282828",
+                        padding: 10,
+                        borderRadius: 10,
+                        flexDirection: "row",
+                        gap: 10,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ fontFamily: "HeroRg", color: "#d24dff",fontSize:20 }}>
+                        {idx + 1}
+                      </Text>
+                      <Image
+                        source={{ uri: el.image_url }}
+                        style={{ height: 50, width: 50, borderRadius: 60 }}
+                      />
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 18,
+                          fontFamily: "HeroBd",
+                        }}
+                      >
+                        {el.artist_name}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          </View>
+        </SafeAreaView>
       )}
-    </ScrollView>
+    </>
   );
 };
 

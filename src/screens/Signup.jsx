@@ -3,7 +3,7 @@ import {
   getAuth,
   updateProfile,
 } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Pressable,
@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import app, { firestore_db } from "../../firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
+import { StatusBar } from "expo-status-bar";
 
 const Signup = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -55,10 +56,9 @@ const Signup = ({ navigation }) => {
           height: "100%",
           width: "100%",
           padding: 20,
-          paddingTop: 40,
         }}
       >
-        <View style={{ gap: 5, marginTop: 30 }}>
+        <View style={{ gap: 5 }}>
           <Text style={{ color: "white", fontSize: 25, fontWeight: "bold" }}>
             SIGNUP
           </Text>

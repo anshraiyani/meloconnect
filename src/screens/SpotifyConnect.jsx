@@ -20,7 +20,7 @@ const discovery = {
   tokenEndpoint: "https://accounts.spotify.com/api/token",
 };
 
-const SpotifyConnect = () => {
+const SpotifyConnect = ({ setToken }) => {
   const [accessToken, setAccessToken] = useState("");
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
@@ -56,7 +56,6 @@ const SpotifyConnect = () => {
       }
     }
   }, [response]);
-
 
   const updateTokens = async (access_token) => {
     try {
@@ -95,8 +94,9 @@ const SpotifyConnect = () => {
         spotify_display_name: userProfile.display_name,
         access_token: access_token,
         profile_image: userProfile.images[1].url,
-        topArtists:topArtists
+        topArtists: topArtists,
       });
+      setToken(true);
     } catch (error) {
       console.error("Error fetching user profile:", error.response.data);
       throw error;
@@ -143,8 +143,8 @@ const SpotifyConnect = () => {
           Connect To Spotify
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=>handleSignout()}>
-      <Text
+      <TouchableOpacity onPress={() => handleSignout()}>
+        <Text
           style={{
             color: "white",
             fontSize: 20,

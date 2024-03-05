@@ -3,7 +3,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-import Home from "../screens/Home";
+import Profile from "../screens/Profile";
 const Stack = createStackNavigator();
 
 const HomeNavigator = () => {
@@ -15,7 +15,7 @@ const HomeNavigator = () => {
         gestureEnabled: true,
       }}
     >
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   )
 }

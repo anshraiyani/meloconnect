@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import AuthNavigator from "./src/navigators/AuthNavigator";
 import SpotifyNavigator from "./src/navigators/SpotifyNavigator";
-import { Text } from "react-native";
-import SpotifyConnect from "./src/screens/SpotifyConnect";
+import Splash from "./src/screens/Splash";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -20,7 +19,7 @@ export default function App() {
       } else {
         setUser(null);
       }
-      setLoading(false)
+      setLoading(false);
     });
     return unsubscribe;
   }, []);
@@ -28,7 +27,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {loading ? (
-        <Text>Loading</Text>
+        <Splash />
       ) : user ? (
         <SpotifyNavigator user={user} />
       ) : (
