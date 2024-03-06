@@ -7,21 +7,21 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getAuth, signOut } from "firebase/auth";
-import axios from "axios";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as Clipboard from "expo-clipboard";
-import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { useUser } from "../contexts/userContext";
 
 const Profile = () => {
-  const [spotifyUser, setSpotifyUser] = useState(null);
+  const { userState, dispatchUser } = useUser();
 
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(spotifyUser.uid);
+    await Clipboard.setStringAsync(userState.uid);
   };
 
   const getUser = async () => {
@@ -31,7 +31,29 @@ const Profile = () => {
     const userDocRef = doc(userCollections, user.uid);
     const userDocSnapshot = await getDoc(userDocRef);
     if (userDocSnapshot.exists()) {
-      setSpotifyUser(userDocSnapshot.data());
+      const {
+        uid,
+        email,
+        spotify_display_name,
+        profile_image,
+        topArtists,
+        friends,
+        friendRequests,
+        sentFriendRequest,
+      } = userDocSnapshot.data();
+      dispatchUser({
+        type: "UPDATE_USER",
+        payload: {
+          uid,
+          email,
+          spotify_display_name,
+          profile_image,
+          topArtists,
+          friends,
+          friendRequests,
+          sentFriendRequest,
+        },
+      });
     }
   };
 
@@ -67,7 +89,7 @@ const Profile = () => {
   return (
     <>
       {/* <StatusBar style="auto" /> */}
-      {spotifyUser && (
+      {userState.email && (
         <SafeAreaView
           style={{
             height: "100%",
@@ -76,12 +98,32 @@ const Profile = () => {
             padding: 10,
           }}
         >
-          <View style={{ paddingHorizontal: 5 }}>
+          <View
+            style={{
+              paddingHorizontal: 5,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 5,
+            }}
+          >
             <Text
               style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}
             >
-              Profile
+              PROFILE
             </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#8a2424",
+                padding: 5,
+                borderRadius: 10,
+              }}
+              onPress={handleSignout}
+            >
+              <Text style={{ color: "white", fontFamily: "HeroBd" }}>
+                LOG OUT
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={{ backgroundColor: "#404040", height: 2 }}></View>
           <View style={{ width: "100%", height: "100%" }}>
@@ -101,13 +143,13 @@ const Profile = () => {
                   borderColor: "#d24dff",
                   borderWidth: 2,
                 }}
-                source={{ uri: spotifyUser.profile_image }}
+                source={{ uri: userState.profile_image }}
               />
               <View style={{ gap: 5 }}>
                 <Text
                   style={{ color: "white", fontSize: 25, fontFamily: "HeroRg" }}
                 >
-                  {spotifyUser.spotify_display_name}
+                  {userState.spotify_display_name}
                 </Text>
                 <Text
                   style={{
@@ -116,7 +158,7 @@ const Profile = () => {
                     fontFamily: "HeroRg",
                   }}
                 >
-                  {spotifyUser.email}
+                  {userState.email}
                 </Text>
                 <View
                   style={{
@@ -166,7 +208,7 @@ const Profile = () => {
                   paddingTop: 10,
                 }}
               >
-                {spotifyUser.topArtists.map((el, idx) => {
+                {userState.topArtists.map((el, idx) => {
                   return (
                     <View
                       key={el.artist_name}
@@ -179,7 +221,13 @@ const Profile = () => {
                         alignItems: "center",
                       }}
                     >
-                      <Text style={{ fontFamily: "HeroRg", color: "#d24dff",fontSize:20 }}>
+                      <Text
+                        style={{
+                          fontFamily: "HeroBd",
+                          color: "#d24dff",
+                          fontSize: 20,
+                        }}
+                      >
                         {idx + 1}
                       </Text>
                       <Image

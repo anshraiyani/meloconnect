@@ -8,7 +8,7 @@ import {
 
 const Stack = createStackNavigator();
 
-const ChatNavigator = () => {
+const SearchNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -22,4 +22,4 @@ const ChatNavigator = () => {
   );
 };
 
-export default ChatNavigator;
+export default SearchNavigator;

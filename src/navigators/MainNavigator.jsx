@@ -3,12 +3,14 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Profile from "../screens/Profile";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import ChatNavigator from "./ChatNavigator";
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
   return (
     <Tab.Navigator
+      initialRouteName="Profile"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, focused }) => {
@@ -31,6 +33,11 @@ const MainNavigator = () => {
         },
       })}
     >
+      <Tab.Screen
+        name="ChatNavigator"
+        component={ChatNavigator}
+        options={{ title: "CHAT" }}
+      />
       <Tab.Screen
         name="Profile"
         component={Profile}

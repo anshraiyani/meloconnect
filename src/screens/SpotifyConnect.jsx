@@ -21,7 +21,6 @@ const discovery = {
 };
 
 const SpotifyConnect = ({ setToken }) => {
-  const [accessToken, setAccessToken] = useState("");
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -95,6 +94,9 @@ const SpotifyConnect = ({ setToken }) => {
         access_token: access_token,
         profile_image: userProfile.images[1].url,
         topArtists: topArtists,
+        friends:[],
+        friendRequests:[],
+        sentFriendRequests:[],
       });
       setToken(true);
     } catch (error) {

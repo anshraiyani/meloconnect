@@ -6,6 +6,7 @@ import { getAuth } from "firebase/auth";
 import AuthNavigator from "./src/navigators/AuthNavigator";
 import SpotifyNavigator from "./src/navigators/SpotifyNavigator";
 import Splash from "./src/screens/Splash";
+import { UserProvider } from "./src/contexts/userContext";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -25,14 +26,16 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      {loading ? (
-        <Splash />
-      ) : user ? (
-        <SpotifyNavigator user={user} />
-      ) : (
-        <AuthNavigator />
-      )}
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer>
+        {loading ? (
+          <Splash />
+        ) : user ? (
+          <SpotifyNavigator user={user} />
+        ) : (
+          <AuthNavigator />
+        )}
+      </NavigationContainer>
+    </UserProvider>
   );
 }
