@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Profile from "../screens/Profile";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ChatNavigator from "./ChatNavigator";
+import SearchNavigator from "./SearchNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +38,11 @@ const MainNavigator = () => {
         name="ChatNavigator"
         component={ChatNavigator}
         options={{ title: "CHAT" }}
+      />
+      <Tab.Screen
+        name="SearchNavigator"
+        component={SearchNavigator}
+        options={{ title: "SEARCH" }}
       />
       <Tab.Screen
         name="Profile"

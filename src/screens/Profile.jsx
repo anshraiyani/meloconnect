@@ -133,6 +133,7 @@ const Profile = () => {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 10,
+                width: "100%",
               }}
             >
               <Image
@@ -145,30 +146,34 @@ const Profile = () => {
                 }}
                 source={{ uri: userState.profile_image }}
               />
-              <View style={{ gap: 5 }}>
+              <View style={{ gap: 5, flexWrap: "wrap", width: "100%" }}>
                 <Text
                   style={{ color: "white", fontSize: 25, fontFamily: "HeroRg" }}
                 >
                   {userState.spotify_display_name}
                 </Text>
-                <Text
-                  style={{
-                    color: "#909090",
-                    fontSize: 20,
-                    fontFamily: "HeroRg",
-                  }}
-                >
-                  {userState.email}
-                </Text>
+                <View style={{ flexDirection: "row",alignItems:'center' }}>
+                  <Text
+                    style={{
+                      color: "#909090",
+                      fontSize: 17,
+                      fontFamily: "HeroRg",
+                      flex: 1,
+                      flexWrap:'wrap'
+                    }}
+                  >
+                    {userState.email}
+                  </Text>
+                </View>
                 <View
                   style={{
                     backgroundColor: "#d24dff",
-                    width: "50%",
                     justifyContent: "center",
                     alignItems: "center",
                     borderRadius: 10,
                     paddingVertical: 2,
                     paddingHorizontal: 5,
+                    width: 120,
                   }}
                 >
                   <TouchableOpacity
@@ -189,7 +194,7 @@ const Profile = () => {
                     >
                       COPY ID
                     </Text>
-                    <AntDesign name="copy1" size={17} color="white" />
+                    <AntDesign name="copy1" size={17} color="black" />
                   </TouchableOpacity>
                 </View>
               </View>
