@@ -39,7 +39,7 @@ const Profile = () => {
         topArtists,
         friends,
         friendRequests,
-        sentFriendRequest,
+        sentFriendRequests,
       } = userDocSnapshot.data();
       dispatchUser({
         type: "UPDATE_USER",
@@ -51,7 +51,7 @@ const Profile = () => {
           topArtists,
           friends,
           friendRequests,
-          sentFriendRequest,
+          sentFriendRequests,
         },
       });
     }

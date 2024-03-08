@@ -11,13 +11,19 @@ export const UserProvider = ({ children }) => {
     topArtists: [],
     friends: [],
     friendRequests: [],
-    sentFriendRequest: [],
+    sentFriendRequests: [],
   };
 
   const reducer = (state, action) => {
     switch (action.type) {
       case "UPDATE_USER":
         return { ...state, ...action.payload };
+      case "UPDATE_FRIENDS":
+        return { ...state, friends: action.payload };
+      case "UPDATE_FRIEND_REQEUSTS":
+        return { ...state, friendRequests: action.payload };
+      case "UPDATE_SENT_FRIEND_REQUESTS":
+        return { ...state, sentFriendRequests: action.payload };
       default:
         return state;
     }

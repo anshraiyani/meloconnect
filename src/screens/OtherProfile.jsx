@@ -5,18 +5,30 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore_db } from "../../firebase";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import app, { firestore_db } from "../../firebase";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useUser } from "../contexts/userContext";
+import { getAuth } from "firebase/auth";
 
 const OtherProfile = ({ route }) => {
   const other_uid = route.params["other_uid"];
   const similar = route.params["similar"];
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(false);
+  const { userState, dispatchUser } = useUser();
+  const [btnLoading, setBtnLoading] = useState(false);
 
   function getColorByNumber(number) {
     if (number >= 70 && number <= 100) {
@@ -40,7 +52,6 @@ const OtherProfile = ({ route }) => {
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
         setUserData(docSnapshot.data());
-        console.log(docSnapshot.data());
       } else {
         console.log("not found");
       }
@@ -53,6 +64,98 @@ const OtherProfile = ({ route }) => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const handleSendRequest = async (sender_uid, receiver_uid) => {
+    setBtnLoading(true);
+    try {
+      const userDocRefOther = doc(firestore_db, "users", receiver_uid);
+      const userDocRef = doc(firestore_db, "users", sender_uid);
+      await updateDoc(userDocRefOther, {
+        friendRequests: arrayUnion(sender_uid),
+      });
+      await updateDoc(userDocRef, {
+        sentFriendRequests: arrayUnion(receiver_uid),
+      });
+      const sentRequest = [...userState.sentFriendRequests];
+      sentRequest.push(receiver_uid);
+      dispatchUser({
+        type: "UPDATE_SENT_FRIEND_REQUESTS",
+        payload: sentRequest,
+      });
+      setBtnLoading(false);
+    } catch (error) {
+      setBtnLoading(false);
+      console.error("Error adding send request:", error);
+      throw error;
+    }
+  };
+
+  const handleAcceptRequest = async (sender_uid, receiver_uid) => {
+    setBtnLoading(true);
+    try {
+      const userDocRefOther = doc(firestore_db, "users", receiver_uid);
+      const userDocRef = doc(firestore_db, "users", sender_uid);
+      await updateDoc(userDocRefOther, {
+        friends: arrayUnion(sender_uid),
+        sentFriendRequests: arrayRemove(sender_uid),
+      });
+      await updateDoc(userDocRef, {
+        friends: arrayUnion(receiver_uid),
+        friendRequests: arrayRemove(receiver_uid),
+      });
+      let sentRequest = [...userState.sentFriendRequests];
+      const friends = [...userState.friends];
+      friends.push(receiver_uid);
+      sentRequest = sentRequest.filter((x) => x.uid !== receiver_uid);
+      dispatchUser({
+        type: "UPDATE_FRIENDS",
+        payload: friends,
+      });
+      dispatchUser({
+        type: "UPDATE_FRIEND_REQEUSTS",
+        payload: sentRequest,
+      });
+      setBtnLoading(false);
+    } catch (error) {
+      setBtnLoading(false);
+      console.error("Error adding send request:", error);
+      throw error;
+    }
+    setBtnLoading(false);
+  };
+
+  const getUser = async () => {
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+    const userCollections = collection(firestore_db, "users");
+    const userDocRef = doc(userCollections, user.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+    if (userDocSnapshot.exists()) {
+      const {
+        uid,
+        email,
+        spotify_display_name,
+        profile_image,
+        topArtists,
+        friends,
+        friendRequests,
+        sentFriendRequests,
+      } = userDocSnapshot.data();
+      dispatchUser({
+        type: "UPDATE_USER",
+        payload: {
+          uid,
+          email,
+          spotify_display_name,
+          profile_image,
+          topArtists,
+          friends,
+          friendRequests,
+          sentFriendRequests,
+        },
+      });
+    }
+  };
 
   const [fontsLoaded] = useFonts({
     HeroLg: require("../assets/fonts/Hero-Light.ttf"),
@@ -147,6 +250,100 @@ const OtherProfile = ({ route }) => {
               </View>
             </View>
           </View>
+          <View
+            style={{
+              padding: 10,
+              justifyContent: "space-evenly",
+              width: "100%",
+              alignItems: "center",
+              flexDirection: "row",
+            }}
+          >
+            <TouchableOpacity
+              onPress={
+                userState &&
+                (userState.friends.includes(userData.uid)
+                  ? () => {}
+                  : userState.sentFriendRequests.includes(userData.uid)
+                  ? () => {}
+                  : userState.friendRequests.includes(userData.uid)
+                  ? () => {
+                      handleAcceptRequest(userState.uid, userData.uid);
+                    }
+                  : () => handleSendRequest(userState.uid, userData.uid))
+              }
+              style={{
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                backgroundColor:
+                  userState &&
+                  (userState.friends.includes(userData.uid)
+                    ? "#d24dff"
+                    : userState.sentFriendRequests.includes(userData.uid)
+                    ? "yellow"
+                    : userState.friendRequests.includes(userData.uid)
+                    ? "red"
+                    : "green"),
+                borderRadius: 10,
+              }}
+            >
+              {btnLoading ? (
+                <ActivityIndicator size={20} />
+              ) : (
+                <Text
+                  style={{
+                    color: userState.friends.includes(userData.uid)
+                      ? "black"
+                      : userState.sentFriendRequests.includes(userData.uid)
+                      ? "black"
+                      : userState.friendRequests.includes(userData.uid)
+                      ? "white"
+                      : "white",
+                    fontFamily: "HeroBd",
+                    fontSize: 18,
+                  }}
+                >
+                  {userState &&
+                    (userState.friends.includes(userData.uid)
+                      ? "CHAT"
+                      : userState.sentFriendRequests.includes(userData.uid)
+                      ? "REQUEST SENT"
+                      : userState.friendRequests.includes(userData.uid)
+                      ? "ACCEPT REQUEST"
+                      : "SEND REQUEST")}
+                </Text>
+              )}
+            </TouchableOpacity>
+            {userState &&
+              (userState.sentFriendRequests.includes(userData.uid) ||
+              !userState.friends.includes(userData.uid) ? (
+                !userData.friendRequests.includes(userData.uid) ? (
+                  <TouchableOpacity
+                    onPress={getUser}
+                    style={{
+                      paddingHorizontal: 15,
+                      paddingVertical: 5,
+                      backgroundColor: "#d24dff",
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "white",
+                        fontFamily: "HeroBd",
+                        fontSize: 18,
+                      }}
+                    >
+                      REFRESH
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <></>
+                )
+              ) : (
+                <></>
+              ))}
+          </View>
           <View style={{ padding: 5, marginVertical: 10 }}>
             <Text
               style={{ color: "white", fontFamily: "HeroBd", fontSize: 25 }}
@@ -157,7 +354,7 @@ const OtherProfile = ({ route }) => {
               contentContainerStyle={{
                 gap: 10,
                 paddingHorizontal: 50,
-                paddingBottom: 300,
+                paddingBottom: 390,
                 paddingTop: 10,
               }}
             >
