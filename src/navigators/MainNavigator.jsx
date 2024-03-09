@@ -13,6 +13,7 @@ const MainNavigator = () => {
     <Tab.Navigator
       initialRouteName="Profile"
       screenOptions={({ route }) => ({
+        tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarIcon: ({ color, focused }) => {
           let iconname;

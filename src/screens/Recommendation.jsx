@@ -40,8 +40,8 @@ const Recommendation = ({ navigation }) => {
       const usersSnapshot = await getDocs(userCollections);
       let users = [];
       usersSnapshot.forEach((x) => {
-        const arr1 = userState.topArtists.map((el) => el.artist_name);
-        const arr2 = x.data().topArtists.map((el) => el.artist_name);
+        const arr1 = userState.topArtists?.map((el) => el.artist_name) || [];
+        const arr2 = x.data().topArtists?.map((el) => el.artist_name) || [];
         const percentage_similarity = calculateSimilarity(arr1, arr2);
         users.push({ ...x.data(), similar: percentage_similarity });
       });
@@ -52,7 +52,7 @@ const Recommendation = ({ navigation }) => {
       setRecommendations(users);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("error: ", error);
     }
   };
 
@@ -170,64 +170,31 @@ const Recommendation = ({ navigation }) => {
             </View>
 
             <ScrollView style={{ padding: 10, height: "100%" }}>
-              {recommendations.map((x) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("OtherProfile", {
-                      other_uid: x.uid,
-                      similar: x.similar,
-                    })
-                  }
-                  key={x.uid}
-                  style={{
-                    padding: 10,
-                    flexDirection: "row",
-                    marginVertical: 10,
-                    backgroundColor: "#202020",
-                    borderRadius: 10,
-                    gap: 20,
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    style={{ height: 70, width: 70, borderRadius: 70 }}
-                    source={{ uri: x.profile_image }}
-                  />
-                  <View>
-                    <Text
-                      style={{
-                        color: "white",
-                        fontFamily: "HeroRg",
-                        fontSize: 18,
-                      }}
-                    >
-                      {x.spotify_display_name}
-                    </Text>
-                    <Text
-                      style={{
-                        color: "#808080",
-                        fontFamily: "HeroRg",
-                        fontSize: 15,
-                      }}
-                    >
-                      {x.email}
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 5,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: getColorByNumber(x.similar),
-                          fontFamily: "HeroBd",
-                          fontSize: 18,
-                        }}
-                      >
-                        {x.similar}%
-                      </Text>
+              {recommendations &&
+                recommendations.map((x) => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("OtherProfile", {
+                        other_uid: x.uid,
+                        similar: x.similar,
+                      })
+                    }
+                    key={x.uid}
+                    style={{
+                      padding: 10,
+                      flexDirection: "row",
+                      marginVertical: 10,
+                      backgroundColor: "#202020",
+                      borderRadius: 10,
+                      gap: 20,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{ height: 70, width: 70, borderRadius: 70 }}
+                      source={{ uri: x.profile_image }}
+                    />
+                    <View>
                       <Text
                         style={{
                           color: "white",
@@ -235,12 +202,46 @@ const Recommendation = ({ navigation }) => {
                           fontSize: 18,
                         }}
                       >
-                        Match
+                        {x.spotify_display_name}
                       </Text>
+                      <Text
+                        style={{
+                          color: "#808080",
+                          fontFamily: "HeroRg",
+                          fontSize: 15,
+                        }}
+                      >
+                        {x.email}
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 5,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: getColorByNumber(x.similar),
+                            fontFamily: "HeroBd",
+                            fontSize: 18,
+                          }}
+                        >
+                          {x.similar}%
+                        </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontFamily: "HeroRg",
+                            fontSize: 18,
+                          }}
+                        >
+                          Match
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                ))}
             </ScrollView>
           </>
         )}

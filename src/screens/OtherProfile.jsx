@@ -22,7 +22,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useUser } from "../contexts/userContext";
 import { getAuth } from "firebase/auth";
 
-const OtherProfile = ({ route }) => {
+const OtherProfile = ({ navigation, route }) => {
   const other_uid = route.params["other_uid"];
   const similar = route.params["similar"];
   const [userData, setUserData] = useState({});
@@ -263,7 +263,17 @@ const OtherProfile = ({ route }) => {
               onPress={
                 userState &&
                 (userState.friends.includes(userData.uid)
-                  ? () => {}
+                  ? () => {
+                      navigation.navigate("ChatNavigator", {
+                        screen: "MainChat",
+                        params: {
+                          receiver_uid: other_uid,
+                          receiver_name: userData.spotify_display_name,
+                          similar: userData.similar,
+                          receiver_image: userData.profile_image,
+                        },
+                      });
+                    }
                   : userState.sentFriendRequests.includes(userData.uid)
                   ? () => {}
                   : userState.friendRequests.includes(userData.uid)
