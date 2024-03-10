@@ -176,7 +176,6 @@ const OtherProfile = ({ navigation, route }) => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       <SafeAreaView
         style={{
           height: "100%",

@@ -99,7 +99,6 @@ const MainChat = ({ navigation, route }) => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       <KeyboardAvoidingView>
         <SafeAreaView
           style={{

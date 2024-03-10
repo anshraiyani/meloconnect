@@ -26,7 +26,7 @@ const SpotifyConnect = ({ setToken }) => {
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       responseType: AuthSession.ResponseType.Token,
-      clientId: "f58b660788fa4f2f9391a1318a8e609c",
+      clientId: "ace97ee23e9d4d048169cc1b28e1f949",
       scopes: [
         "user-read-email",
         "user-library-read",

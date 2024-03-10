@@ -88,7 +88,6 @@ const Profile = () => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       {userState.email && (
         <SafeAreaView
           style={{

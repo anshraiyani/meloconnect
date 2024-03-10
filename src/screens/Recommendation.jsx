@@ -94,7 +94,6 @@ const Recommendation = ({ navigation }) => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       <SafeAreaView
         style={{
           height: "100%",

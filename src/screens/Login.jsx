@@ -77,7 +77,6 @@ const Login = ({ navigation }) => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       <SafeAreaView
         style={{
           backgroundColor: "black",

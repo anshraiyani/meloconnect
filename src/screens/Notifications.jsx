@@ -160,7 +160,6 @@ const Notifications = ({ navigation }) => {
 
   return (
     <>
-      <StatusBar style="light" networkActivityIndicatorVisible={true} />
       <SafeAreaView
         style={{
           height: "100%",
