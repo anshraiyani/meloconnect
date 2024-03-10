@@ -40,7 +40,7 @@ const SpotifyConnect = ({ setToken }) => {
       ],
       usePKCE: false,
       redirectUri: AuthSession.makeRedirectUri({
-        native: "meloconnect.ansh://",
+        native: "meloconnect.spotify://",
       }),
       // redirectUri: "exp://localhost:8081",
     },
