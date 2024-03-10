@@ -21,6 +21,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useUser } from "../contexts/userContext";
 import { getAuth } from "firebase/auth";
+import { StatusBar } from "expo-status-bar";
 
 const OtherProfile = ({ navigation, route }) => {
   const other_uid = route.params["other_uid"];
@@ -174,247 +175,254 @@ const OtherProfile = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "#101010",
-        padding: 10,
-      }}
-    >
-      {loading && !userData.topArtists ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <ActivityIndicator size={60} />
-        </View>
-      ) : (
-        <View>
+    <>
+      <StatusBar style="light" networkActivityIndicatorVisible={true} />
+      <SafeAreaView
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: "#101010",
+          padding: 10,
+        }}
+      >
+        {loading && !userData.topArtists ? (
           <View
             style={{
-              padding: 10,
-              flexDirection: "row",
+              justifyContent: "center",
               alignItems: "center",
-              gap: 10,
-              width: "100%",
+              height: "100%",
             }}
           >
-            <Image
-              style={{
-                height: 100,
-                width: 100,
-                borderRadius: 100,
-                borderColor: "#d24dff",
-                borderWidth: 2,
-              }}
-              source={{ uri: userData.profile_image }}
-            />
-            <View style={{ gap: 5, flexWrap: "wrap", width: "100%" }}>
-              <Text
-                style={{ color: "white", fontSize: 25, fontFamily: "HeroRg" }}
-              >
-                {userData.spotify_display_name}
-              </Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text
-                  style={{
-                    color: "#909090",
-                    fontSize: 17,
-                    fontFamily: "HeroRg",
-                    flex: 1,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {userData.email}
-                </Text>
-              </View>
-              <View style={{ flexDirection: "row", gap: 5 }}>
-                <Text
-                  style={{
-                    color: getColorByNumber(similar),
-                    fontFamily: "HeroBd",
-                    fontSize: 20,
-                  }}
-                >
-                  {similar}
-                </Text>
-                <Text
-                  style={{ fontFamily: "HeroBd", fontSize: 20, color: "white" }}
-                >
-                  Match
-                </Text>
-              </View>
-            </View>
+            <ActivityIndicator size={60} />
           </View>
-          <View
-            style={{
-              padding: 10,
-              justifyContent: "space-evenly",
-              width: "100%",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <TouchableOpacity
-              onPress={
-                userState &&
-                (userState.friends.includes(userData.uid)
-                  ? () => {
-                      navigation.navigate("ChatNavigator", {
-                        screen: "MainChat",
-                        params: {
-                          receiver_uid: other_uid,
-                          receiver_name: userData.spotify_display_name,
-                          similar: userData.similar,
-                          receiver_image: userData.profile_image,
-                        },
-                      });
-                    }
-                  : userState.sentFriendRequests.includes(userData.uid)
-                  ? () => {}
-                  : userState.friendRequests.includes(userData.uid)
-                  ? () => {
-                      handleAcceptRequest(userState.uid, userData.uid);
-                    }
-                  : () => handleSendRequest(userState.uid, userData.uid))
-              }
+        ) : (
+          <View>
+            <View
               style={{
-                paddingHorizontal: 15,
-                paddingVertical: 5,
-                backgroundColor:
-                  userState &&
-                  (userState.friends.includes(userData.uid)
-                    ? "#d24dff"
-                    : userState.sentFriendRequests.includes(userData.uid)
-                    ? "yellow"
-                    : userState.friendRequests.includes(userData.uid)
-                    ? "red"
-                    : "green"),
-                borderRadius: 10,
+                padding: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                width: "100%",
               }}
             >
-              {btnLoading ? (
-                <ActivityIndicator size={20} />
-              ) : (
+              <Image
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 100,
+                  borderColor: "#d24dff",
+                  borderWidth: 2,
+                }}
+                source={{ uri: userData.profile_image }}
+              />
+              <View style={{ gap: 5, flexWrap: "wrap", width: "100%" }}>
                 <Text
-                  style={{
-                    color: userState.friends.includes(userData.uid)
-                      ? "black"
-                      : userState.sentFriendRequests.includes(userData.uid)
-                      ? "black"
-                      : userState.friendRequests.includes(userData.uid)
-                      ? "white"
-                      : "white",
-                    fontFamily: "HeroBd",
-                    fontSize: 18,
-                  }}
+                  style={{ color: "white", fontSize: 25, fontFamily: "HeroRg" }}
                 >
-                  {userState &&
-                    (userState.friends.includes(userData.uid)
-                      ? "CHAT"
-                      : userState.sentFriendRequests.includes(userData.uid)
-                      ? "REQUEST SENT"
-                      : userState.friendRequests.includes(userData.uid)
-                      ? "ACCEPT REQUEST"
-                      : "SEND REQUEST")}
+                  {userData.spotify_display_name}
                 </Text>
-              )}
-            </TouchableOpacity>
-            {userState &&
-              (userState.sentFriendRequests.includes(userData.uid) ||
-              !userState.friends.includes(userData.uid) ? (
-                !userData.friendRequests.includes(userData.uid) ? (
-                  <TouchableOpacity
-                    onPress={getUser}
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text
                     style={{
-                      paddingHorizontal: 15,
-                      paddingVertical: 5,
-                      backgroundColor: "#d24dff",
-                      borderRadius: 10,
+                      color: "#909090",
+                      fontSize: 17,
+                      fontFamily: "HeroRg",
+                      flex: 1,
+                      flexWrap: "wrap",
                     }}
                   >
-                    <Text
-                      style={{
-                        color: "white",
-                        fontFamily: "HeroBd",
-                        fontSize: 18,
-                      }}
-                    >
-                      REFRESH
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <></>
-                )
-              ) : (
-                <></>
-              ))}
-          </View>
-          <View style={{ padding: 5, marginVertical: 10 }}>
-            <Text
-              style={{ color: "white", fontFamily: "HeroBd", fontSize: 25 }}
-            >
-              Top Artists
-            </Text>
-            <ScrollView
-              contentContainerStyle={{
-                gap: 10,
-                paddingHorizontal: 50,
-                paddingBottom: 390,
-                paddingTop: 10,
+                    {userData.email}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text
+                    style={{
+                      color: getColorByNumber(similar),
+                      fontFamily: "HeroBd",
+                      fontSize: 20,
+                    }}
+                  >
+                    {similar}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "HeroBd",
+                      fontSize: 20,
+                      color: "white",
+                    }}
+                  >
+                    Match
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              style={{
+                padding: 10,
+                justifyContent: "space-evenly",
+                width: "100%",
+                alignItems: "center",
+                flexDirection: "row",
               }}
             >
-              {userData.topArtists ? (
-                userData.topArtists.map((el, idx) => {
-                  return (
-                    <View
-                      key={el.artist_name}
+              <TouchableOpacity
+                onPress={
+                  userState &&
+                  (userState.friends.includes(userData.uid)
+                    ? () => {
+                        navigation.navigate("ChatNavigator", {
+                          screen: "MainChat",
+                          params: {
+                            receiver_uid: other_uid,
+                            receiver_name: userData.spotify_display_name,
+                            similar: userData.similar,
+                            receiver_image: userData.profile_image,
+                          },
+                        });
+                      }
+                    : userState.sentFriendRequests.includes(userData.uid)
+                    ? () => {}
+                    : userState.friendRequests.includes(userData.uid)
+                    ? () => {
+                        handleAcceptRequest(userState.uid, userData.uid);
+                      }
+                    : () => handleSendRequest(userState.uid, userData.uid))
+                }
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 5,
+                  backgroundColor:
+                    userState &&
+                    (userState.friends.includes(userData.uid)
+                      ? "#d24dff"
+                      : userState.sentFriendRequests.includes(userData.uid)
+                      ? "yellow"
+                      : userState.friendRequests.includes(userData.uid)
+                      ? "red"
+                      : "green"),
+                  borderRadius: 10,
+                }}
+              >
+                {btnLoading ? (
+                  <ActivityIndicator size={20} />
+                ) : (
+                  <Text
+                    style={{
+                      color: userState.friends.includes(userData.uid)
+                        ? "black"
+                        : userState.sentFriendRequests.includes(userData.uid)
+                        ? "black"
+                        : userState.friendRequests.includes(userData.uid)
+                        ? "white"
+                        : "white",
+                      fontFamily: "HeroBd",
+                      fontSize: 18,
+                    }}
+                  >
+                    {userState &&
+                      (userState.friends.includes(userData.uid)
+                        ? "CHAT"
+                        : userState.sentFriendRequests.includes(userData.uid)
+                        ? "REQUEST SENT"
+                        : userState.friendRequests.includes(userData.uid)
+                        ? "ACCEPT REQUEST"
+                        : "SEND REQUEST")}
+                  </Text>
+                )}
+              </TouchableOpacity>
+              {userState &&
+                (userState.sentFriendRequests.includes(userData.uid) ||
+                !userState.friends.includes(userData.uid) ? (
+                  !userData.friendRequests.includes(userData.uid) ? (
+                    <TouchableOpacity
+                      onPress={getUser}
                       style={{
-                        backgroundColor: "#282828",
-                        padding: 10,
+                        paddingHorizontal: 15,
+                        paddingVertical: 5,
+                        backgroundColor: "#d24dff",
                         borderRadius: 10,
-                        flexDirection: "row",
-                        gap: 10,
-                        alignItems: "center",
                       }}
                     >
-                      <Text
-                        style={{
-                          fontFamily: "HeroBd",
-                          color: "#d24dff",
-                          fontSize: 20,
-                        }}
-                      >
-                        {idx + 1}
-                      </Text>
-                      <Image
-                        source={{ uri: el.image_url }}
-                        style={{ height: 50, width: 50, borderRadius: 60 }}
-                      />
                       <Text
                         style={{
                           color: "white",
-                          fontSize: 18,
                           fontFamily: "HeroBd",
+                          fontSize: 18,
                         }}
                       >
-                        {el.artist_name}
+                        REFRESH
                       </Text>
-                    </View>
-                  );
-                })
-              ) : (
-                <View></View>
-              )}
-            </ScrollView>
+                    </TouchableOpacity>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                ))}
+            </View>
+            <View style={{ padding: 5, marginVertical: 10 }}>
+              <Text
+                style={{ color: "white", fontFamily: "HeroBd", fontSize: 25 }}
+              >
+                Top Artists
+              </Text>
+              <ScrollView
+                contentContainerStyle={{
+                  gap: 10,
+                  paddingHorizontal: 50,
+                  paddingBottom: 390,
+                  paddingTop: 10,
+                }}
+              >
+                {userData.topArtists ? (
+                  userData.topArtists.map((el, idx) => {
+                    return (
+                      <View
+                        key={el.artist_name}
+                        style={{
+                          backgroundColor: "#282828",
+                          padding: 10,
+                          borderRadius: 10,
+                          flexDirection: "row",
+                          gap: 10,
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "HeroBd",
+                            color: "#d24dff",
+                            fontSize: 20,
+                          }}
+                        >
+                          {idx + 1}
+                        </Text>
+                        <Image
+                          source={{ uri: el.image_url }}
+                          style={{ height: 50, width: 50, borderRadius: 60 }}
+                        />
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 18,
+                            fontFamily: "HeroBd",
+                          }}
+                        >
+                          {el.artist_name}
+                        </Text>
+                      </View>
+                    );
+                  })
+                ) : (
+                  <View></View>
+                )}
+              </ScrollView>
+            </View>
           </View>
-        </View>
-      )}
-    </SafeAreaView>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 

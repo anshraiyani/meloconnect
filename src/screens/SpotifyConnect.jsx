@@ -12,6 +12,8 @@ import { getAuth, signOut } from "firebase/auth";
 import app, { firestore_db } from "../../firebase";
 import axios from "axios";
 import { collection, doc, updateDoc } from "firebase/firestore";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,7 +23,6 @@ const discovery = {
 };
 
 const SpotifyConnect = ({ setToken }) => {
-
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       responseType: AuthSession.ResponseType.Token,
@@ -38,10 +39,10 @@ const SpotifyConnect = ({ setToken }) => {
         "playlist-modify-public",
       ],
       usePKCE: false,
-      // redirectUri: AuthSession.makeRedirectUri({
-      //   native: "meloconnect.ansh://",
-      // }),
-      redirectUri: "exp://localhost:8081",
+      redirectUri: AuthSession.makeRedirectUri({
+        native: "meloconnect.spotify://",
+      }),
+      // redirectUri: "exp://localhost:8081",
     },
     discovery
   );
@@ -94,9 +95,9 @@ const SpotifyConnect = ({ setToken }) => {
         access_token: access_token,
         profile_image: userProfile.images[1].url,
         topArtists: topArtists,
-        friends:[],
-        friendRequests:[],
-        sentFriendRequests:[],
+        friends: [],
+        friendRequests: [],
+        sentFriendRequests: [],
       });
       setToken(true);
     } catch (error) {
@@ -114,6 +115,22 @@ const SpotifyConnect = ({ setToken }) => {
     }
   };
 
+  const [fontsLoaded] = useFonts({
+    HeroLg: require("../assets/fonts/Hero-Light.ttf"),
+    HeroRg: require("../assets/fonts/Hero-Regular.ttf"),
+    HeroBd: require("../assets/fonts/Hero-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaView
       style={{
@@ -121,42 +138,40 @@ const SpotifyConnect = ({ setToken }) => {
         padding: 20,
         height: "100%",
         backgroundColor: "black",
-        justifyContent: "center",
         alignItems: "center",
-        gap: 50,
       }}
     >
-      <Image
-        style={{ height: 255, width: 250 }}
-        source={require("../assets/spotify-logo.png")}
-      />
-      <TouchableOpacity
-        style={{ backgroundColor: "#4DED75", padding: 10, borderRadius: 7 }}
-        onPress={() => promptAsync()}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            color: "black",
-            fontWeight: "600",
-          }}
-        >
-          Connect To Spotify
+      <View style={{ marginBottom: 60 }}>
+        <Text style={{ color: "white", fontFamily: "HeroBd", fontSize: 28 }}>
+          Before You Continue
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleSignout()}>
-        <Text
+      </View>
+      <View style={{ gap: 50 }}>
+        <Image
+          style={{ height: 255, width: 250 }}
+          source={require("../assets/spotify-logo.png")}
+        />
+        <TouchableOpacity
           style={{
-            color: "white",
-            fontSize: 20,
-            color: "black",
-            fontWeight: "600",
+            backgroundColor: "#4DED75",
+            padding: 10,
+            borderRadius: 7,
+            alignItems: "center",
           }}
+          onPress={() => promptAsync()}
         >
-          Log Out
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              color: "black",
+              fontFamily: "HeroBd",
+            }}
+          >
+            Connect To Spotify
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

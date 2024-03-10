@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { firestore_db } from "../../firebase";
 import { useUser } from "../contexts/userContext";
 import { collection, getDocs } from "firebase/firestore";
+import { StatusBar } from "expo-status-bar";
 
 const Recommendation = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -92,143 +93,117 @@ const Recommendation = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "#101010",
-        padding: 10,
-      }}
-    >
-      <View>
-        <View
-          style={{
-            paddingHorizontal: 5,
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 5,
-            gap: 5,
-          }}
-        >
-          <View>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="arrow-back-circle-outline"
-                size={35}
-                color="#d24dff"
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={{ color: "white", fontSize: 30, fontFamily: "HeroBd" }}>
-            RECOMMENDATIONS
-          </Text>
-        </View>
-        <View style={{ backgroundColor: "#404040", height: 2 }}></View>
-
-        {loading ? (
+    <>
+      <StatusBar style="light" networkActivityIndicatorVisible={true} />
+      <SafeAreaView
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: "#101010",
+          padding: 10,
+        }}
+      >
+        <View>
           <View
             style={{
-              height: "100%",
-              width: "100%",
-              justifyContent: "center",
+              paddingHorizontal: 5,
+              flexDirection: "row",
               alignItems: "center",
+              marginBottom: 5,
+              gap: 5,
             }}
           >
-            <ActivityIndicator size={60} />
-          </View>
-        ) : (
-          <>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                marginTop: 10,
-              }}
-            >
-              <TouchableOpacity
-                onPress={fetchRecommendations}
-                style={{
-                  flexDirection: "row",
-                  gap: 5,
-                  backgroundColor: "#d24dff",
-                  alignItems: "center",
-                  paddingHorizontal: 5,
-                  borderRadius: 10,
-                }}
-              >
-                <Text
-                  style={{ color: "white", fontFamily: "HeroRg", fontSize: 15 }}
-                >
-                  REFRESH
-                </Text>
+            <View>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Ionicons
-                  name="refresh-circle-outline"
-                  size={28}
-                  color="white"
+                  name="arrow-back-circle-outline"
+                  size={35}
+                  color="#d24dff"
                 />
               </TouchableOpacity>
             </View>
+            <Text
+              style={{ color: "white", fontSize: 30, fontFamily: "HeroBd" }}
+            >
+              RECOMMENDATIONS
+            </Text>
+          </View>
+          <View style={{ backgroundColor: "#404040", height: 2 }}></View>
 
-            <ScrollView style={{ padding: 10, height: "100%" }}>
-              {recommendations &&
-                recommendations.map((x) => (
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("OtherProfile", {
-                        other_uid: x.uid,
-                        similar: x.similar,
-                      })
-                    }
-                    key={x.uid}
+          {loading ? (
+            <View
+              style={{
+                height: "100%",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator size={60} />
+            </View>
+          ) : (
+            <>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  marginTop: 10,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={fetchRecommendations}
+                  style={{
+                    flexDirection: "row",
+                    gap: 5,
+                    backgroundColor: "#d24dff",
+                    alignItems: "center",
+                    paddingHorizontal: 5,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Text
                     style={{
-                      padding: 10,
-                      flexDirection: "row",
-                      marginVertical: 10,
-                      backgroundColor: "#202020",
-                      borderRadius: 10,
-                      gap: 20,
-                      alignItems: "center",
+                      color: "white",
+                      fontFamily: "HeroRg",
+                      fontSize: 15,
                     }}
                   >
-                    <Image
-                      style={{ height: 70, width: 70, borderRadius: 70 }}
-                      source={{ uri: x.profile_image }}
-                    />
-                    <View>
-                      <Text
-                        style={{
-                          color: "white",
-                          fontFamily: "HeroRg",
-                          fontSize: 18,
-                        }}
-                      >
-                        {x.spotify_display_name}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#808080",
-                          fontFamily: "HeroRg",
-                          fontSize: 15,
-                        }}
-                      >
-                        {x.email}
-                      </Text>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: getColorByNumber(x.similar),
-                            fontFamily: "HeroBd",
-                            fontSize: 18,
-                          }}
-                        >
-                          {x.similar}%
-                        </Text>
+                    REFRESH
+                  </Text>
+                  <Ionicons
+                    name="refresh-circle-outline"
+                    size={28}
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={{ padding: 10, height: "100%" }}>
+                {recommendations &&
+                  recommendations.map((x) => (
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("OtherProfile", {
+                          other_uid: x.uid,
+                          similar: x.similar,
+                        })
+                      }
+                      key={x.uid}
+                      style={{
+                        padding: 10,
+                        flexDirection: "row",
+                        marginVertical: 10,
+                        backgroundColor: "#202020",
+                        borderRadius: 10,
+                        gap: 20,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        style={{ height: 70, width: 70, borderRadius: 70 }}
+                        source={{ uri: x.profile_image }}
+                      />
+                      <View>
                         <Text
                           style={{
                             color: "white",
@@ -236,17 +211,52 @@ const Recommendation = ({ navigation }) => {
                             fontSize: 18,
                           }}
                         >
-                          Match
+                          {x.spotify_display_name}
                         </Text>
+                        <Text
+                          style={{
+                            color: "#808080",
+                            fontFamily: "HeroRg",
+                            fontSize: 15,
+                          }}
+                        >
+                          {x.email}
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: getColorByNumber(x.similar),
+                              fontFamily: "HeroBd",
+                              fontSize: 18,
+                            }}
+                          >
+                            {x.similar}%
+                          </Text>
+                          <Text
+                            style={{
+                              color: "white",
+                              fontFamily: "HeroRg",
+                              fontSize: 18,
+                            }}
+                          >
+                            Match
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-            </ScrollView>
-          </>
-        )}
-      </View>
-    </SafeAreaView>
+                    </TouchableOpacity>
+                  ))}
+              </ScrollView>
+            </>
+          )}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 

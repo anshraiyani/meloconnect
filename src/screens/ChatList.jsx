@@ -14,26 +14,12 @@ import { useUser } from "../contexts/userContext";
 import { Feather } from "@expo/vector-icons";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore_db } from "../../firebase";
+import { StatusBar } from "expo-status-bar";
 
 const ChatList = ({ navigation }) => {
   const { userState, dispatchUser } = useUser();
   const [friendlist, setFriendlist] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  function getColorByNumber(number) {
-    if (number >= 70 && number <= 100) {
-      return "green";
-    } else if (number >= 50 && number < 70) {
-      return "yellow";
-    } else if (number >= 30 && number < 50) {
-      return "orange";
-    } else if (number >= 0 && number < 30) {
-      return "red";
-    } else {
-      // Handle cases where the number is outside the specified ranges
-      return "unknown";
-    }
-  }
 
   function calculateSimilarity(arr1, arr2) {
     const set1 = new Set(arr1);
@@ -98,119 +84,122 @@ const ChatList = ({ navigation }) => {
     return null;
   }
   return (
-    <SafeAreaView
-      style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "#101010",
-        padding: 10,
-      }}
-    >
-      <View
+    <>
+      <StatusBar style="light" networkActivityIndicatorVisible={true} />
+      <SafeAreaView
         style={{
-          paddingHorizontal: 5,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 5,
+          height: "100%",
+          width: "100%",
+          backgroundColor: "#101010",
+          padding: 10,
         }}
       >
-        <Text style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}>
-          CHATS
-        </Text>
-        {userState && (
-          <View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Notifications")}
-            >
-              <Feather name="bell" size={28} color="#d24dff" />
-              {userState.friendRequests.length !== 0 ? (
-                <View
-                  style={{
-                    backgroundColor: "red",
-                    height: 25,
-                    width: 25,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 12,
-                    position: "absolute",
-                    top: -15,
-                    right: -10,
-                  }}
-                >
-                  <Text
+        <View
+          style={{
+            paddingHorizontal: 5,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}>
+            CHATS
+          </Text>
+          {userState && (
+            <View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Notifications")}
+              >
+                <Feather name="bell" size={28} color="#d24dff" />
+                {userState.friendRequests.length !== 0 ? (
+                  <View
                     style={{
-                      color: "white",
-                      fontFamily: "HeroRg",
-                      fontSize: 17,
+                      backgroundColor: "red",
+                      height: 25,
+                      width: 25,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 12,
+                      position: "absolute",
+                      top: -15,
+                      right: -10,
                     }}
                   >
-                    {userState.friendRequests.length > 9
-                      ? "9+"
-                      : userState.friendRequests.length}
-                  </Text>
-                </View>
-              ) : (
-                <></>
-              )}
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-      <View style={{ backgroundColor: "#404040", height: 2 }}></View>
-      <ScrollView>
-        {loading ? (
-          <ActivityIndicator size={30} />
-        ) : (
-          friendlist &&
-          friendlist.map((x) => {
-            return (
-              <TouchableOpacity
-                key={x.uid}
-                style={{
-                  padding: 10,
-                  marginVertical: 10,
-                  backgroundColor: "#202020",
-                  borderRadius: 10,
-                }}
-                onPress={() =>
-                  navigation.navigate("MainChat", {
-                    receiver_uid: x.uid,
-                    receiver_name:x.spotify_display_name,
-                    similar: x.similar,
-                    receiver_image:x.profile_image
-                  })
-                }
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 20,
-                    alignItems: "center",
-                  }}
-                >
-                  <Image
-                    style={{ height: 70, width: 70, borderRadius: 70 }}
-                    source={{ uri: x.profile_image }}
-                  />
-                  <View>
                     <Text
                       style={{
                         color: "white",
                         fontFamily: "HeroRg",
-                        fontSize: 25,
+                        fontSize: 17,
                       }}
                     >
-                      {x.spotify_display_name}
+                      {userState.friendRequests.length > 9
+                        ? "9+"
+                        : userState.friendRequests.length}
                     </Text>
                   </View>
-                </View>
+                ) : (
+                  <></>
+                )}
               </TouchableOpacity>
-            );
-          })
-        )}
-      </ScrollView>
-    </SafeAreaView>
+            </View>
+          )}
+        </View>
+        <View style={{ backgroundColor: "#404040", height: 2 }}></View>
+        <ScrollView>
+          {loading ? (
+            <ActivityIndicator key={1} size={30} />
+          ) : (
+            friendlist &&
+            friendlist.map((x) => {
+              return (
+                <TouchableOpacity
+                  key={x.uid}
+                  style={{
+                    padding: 10,
+                    marginVertical: 10,
+                    backgroundColor: "#202020",
+                    borderRadius: 10,
+                  }}
+                  onPress={() =>
+                    navigation.navigate("MainChat", {
+                      receiver_uid: x.uid,
+                      receiver_name: x.spotify_display_name,
+                      similar: x.similar,
+                      receiver_image: x.profile_image,
+                    })
+                  }
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 20,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      style={{ height: 70, width: 70, borderRadius: 70 }}
+                      source={{ uri: x.profile_image }}
+                    />
+                    <View>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "HeroRg",
+                          fontSize: 25,
+                        }}
+                      >
+                        {x.spotify_display_name}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 

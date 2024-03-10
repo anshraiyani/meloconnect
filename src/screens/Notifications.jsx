@@ -20,7 +20,7 @@ import {
 } from "firebase/firestore";
 import app, { firestore_db } from "../../firebase";
 import { getAuth } from "firebase/auth";
-
+import { StatusBar } from "expo-status-bar";
 
 const Notifications = ({ navigation }) => {
   const { userState, dispatchUser } = useUser();
@@ -124,7 +124,6 @@ const Notifications = ({ navigation }) => {
     }
   };
 
-
   const handleAcceptRequest = async (sender_uid, receiver_uid) => {
     setBtnLoading(true);
     try {
@@ -160,124 +159,94 @@ const Notifications = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "#101010",
-        padding: 10,
-      }}
-    >
-      <View
+    <>
+      <StatusBar style="light" networkActivityIndicatorVisible={true} />
+      <SafeAreaView
         style={{
-          paddingHorizontal: 5,
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: 5,
-          gap: 5,
+          height: "100%",
+          width: "100%",
+          backgroundColor: "#101010",
+          padding: 10,
         }}
       >
-        <View>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons
-              name="arrow-back-circle-outline"
-              size={35}
-              color="#d24dff"
-            />
-          </TouchableOpacity>
-        </View>
-        <Text style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}>
-          NOTIFICATIONS
-        </Text>
-      </View>
-      <View style={{ backgroundColor: "#404040", height: 2 }}></View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          marginTop: 10,
-        }}
-      >
-        <TouchableOpacity
-          onPress={getCurrentUser}
+        <View
           style={{
-            flexDirection: "row",
-            gap: 5,
-            backgroundColor: "#d24dff",
-            alignItems: "center",
             paddingHorizontal: 5,
-            borderRadius: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+            gap: 5,
           }}
         >
-          <Text style={{ color: "white", fontFamily: "HeroRg", fontSize: 15 }}>
-            REFRESH
+          <View>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons
+                name="arrow-back-circle-outline"
+                size={35}
+                color="#d24dff"
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}>
+            NOTIFICATIONS
           </Text>
-          <Ionicons name="refresh-circle-outline" size={28} color="white" />
-        </TouchableOpacity>
-      </View>
-      {loading ? (
-        <ActivityIndicator size={34} />
-      ) : (
-        <ScrollView style={{ padding: 10, height: "100%" }}>
-          {requestList &&
-            requestList.map((x) => {
-              return (
-                <View
-                  key={x}
-                  style={{
-                    padding: 10,
-                    marginVertical: 10,
-                    backgroundColor: "#202020",
-                    borderRadius: 10,
-                    alignItems: "center",
-                  }}
-                >
+        </View>
+        <View style={{ backgroundColor: "#404040", height: 2 }}></View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: 10,
+          }}
+        >
+          <TouchableOpacity
+            onPress={getCurrentUser}
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              backgroundColor: "#d24dff",
+              alignItems: "center",
+              paddingHorizontal: 5,
+              borderRadius: 10,
+            }}
+          >
+            <Text
+              style={{ color: "white", fontFamily: "HeroRg", fontSize: 15 }}
+            >
+              REFRESH
+            </Text>
+            <Ionicons name="refresh-circle-outline" size={28} color="white" />
+          </TouchableOpacity>
+        </View>
+        {loading ? (
+          <ActivityIndicator size={34} />
+        ) : (
+          <ScrollView style={{ padding: 10, height: "100%" }}>
+            {requestList &&
+              requestList.map((x) => {
+                return (
                   <View
+                    key={x}
                     style={{
-                      flexDirection: "row",
-                      gap: 20,
+                      padding: 10,
+                      marginVertical: 10,
+                      backgroundColor: "#202020",
+                      borderRadius: 10,
                       alignItems: "center",
                     }}
                   >
-                    <Image
-                      style={{ height: 70, width: 70, borderRadius: 70 }}
-                      source={{ uri: x.profile_image }}
-                    />
-                    <View>
-                      <Text
-                        style={{
-                          color: "white",
-                          fontFamily: "HeroRg",
-                          fontSize: 18,
-                        }}
-                      >
-                        {x.spotify_display_name}
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#808080",
-                          fontFamily: "HeroRg",
-                          fontSize: 15,
-                        }}
-                      >
-                        {x.email}
-                      </Text>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: getColorByNumber(x.similar),
-                            fontFamily: "HeroBd",
-                            fontSize: 18,
-                          }}
-                        >
-                          {x.similar}%
-                        </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        gap: 20,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        style={{ height: 70, width: 70, borderRadius: 70 }}
+                        source={{ uri: x.profile_image }}
+                      />
+                      <View>
                         <Text
                           style={{
                             color: "white",
@@ -285,59 +254,96 @@ const Notifications = ({ navigation }) => {
                             fontSize: 18,
                           }}
                         >
-                          Match
+                          {x.spotify_display_name}
                         </Text>
+                        <Text
+                          style={{
+                            color: "#808080",
+                            fontFamily: "HeroRg",
+                            fontSize: 15,
+                          }}
+                        >
+                          {x.email}
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: getColorByNumber(x.similar),
+                              fontFamily: "HeroBd",
+                              fontSize: 18,
+                            }}
+                          >
+                            {x.similar}%
+                          </Text>
+                          <Text
+                            style={{
+                              color: "white",
+                              fontFamily: "HeroRg",
+                              fontSize: 18,
+                            }}
+                          >
+                            Match
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-evenly",
-                      width: "100%",
-                      marginTop: 18,
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => handleAcceptRequest(userState.uid, x.uid)}
+                    <View
                       style={{
-                        backgroundColor: "red",
-                        padding: 5,
-                        borderRadius: 10,
+                        flexDirection: "row",
+                        justifyContent: "space-evenly",
+                        width: "100%",
+                        marginTop: 18,
                       }}
                     >
-                      <Text style={{ color: "white", fontFamily: "HeroBd" }}>
-                        {btnLoading ? (
-                          <ActivityIndicator size={20} />
-                        ) : (
-                          "ACCEPT REQUEST"
-                        )}
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#d24dff",
-                        padding: 5,
-                        borderRadius: 10,
-                      }}
-                      onPress={() =>
-                        navigation.navigate("OtherProfile", {
-                          other_uid: x.uid,
-                          similar: x.similar,
-                        })
-                      }
-                    >
-                      <Text style={{ color: "white", fontFamily: "HeroBd" }}>
-                        VIEW PROFILE
-                      </Text>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAcceptRequest(userState.uid, x.uid)
+                        }
+                        style={{
+                          backgroundColor: "red",
+                          padding: 5,
+                          borderRadius: 10,
+                        }}
+                      >
+                        <Text style={{ color: "white", fontFamily: "HeroBd" }}>
+                          {btnLoading ? (
+                            <ActivityIndicator size={20} />
+                          ) : (
+                            "ACCEPT REQUEST"
+                          )}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          backgroundColor: "#d24dff",
+                          padding: 5,
+                          borderRadius: 10,
+                        }}
+                        onPress={() =>
+                          navigation.navigate("OtherProfile", {
+                            other_uid: x.uid,
+                            similar: x.similar,
+                          })
+                        }
+                      >
+                        <Text style={{ color: "white", fontFamily: "HeroBd" }}>
+                          VIEW PROFILE
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              );
-            })}
-        </ScrollView>
-      )}
-    </SafeAreaView>
+                );
+              })}
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 

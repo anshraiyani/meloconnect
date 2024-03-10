@@ -15,6 +15,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore_db } from "../../firebase";
 import { useUser } from "../contexts/userContext";
+import { StatusBar } from "expo-status-bar";
 
 const SearchUser = ({ navigation }) => {
   const [userUid, setUserUid] = useState("");
@@ -98,149 +99,119 @@ const SearchUser = ({ navigation }) => {
       } catch (error) {
         console.error("Error fetching document data:", error);
       }
-    }else{
-      setError(true)
+    } else {
+      setError(true);
     }
   };
 
   return (
-    <SafeAreaView
-      style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "#101010",
-        padding: 10,
-      }}
-    >
-      <View>
-        <View
-          style={{
-            paddingHorizontal: 5,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 5,
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}>
-            SEARCH USER
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Recommendation")}
+    <>
+      <StatusBar style="light" networkActivityIndicatorVisible={true} />
+      <SafeAreaView
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: "#101010",
+          padding: 10,
+        }}
+      >
+        <View>
+          <View
             style={{
-              borderColor: "#d24dff",
-              padding: 8,
-              borderRadius: 20,
-              backgroundColor: "#d24dff",
+              paddingHorizontal: 5,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 5,
             }}
           >
-            <FontAwesome5 name="magic" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-        <View style={{ backgroundColor: "#404040", height: 2 }}></View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 10,
-            paddingVertical: 10,
-          }}
-        >
-          <TextInput
-            style={{
-              backgroundColor: "#303030",
-              fontSize: 17,
-              padding: 7,
-              borderRadius: 10,
-              color: "white",
-              fontFamily: "HeroRg",
-              width: "90%",
-            }}
-            placeholder="Enter UID"
-            placeholderTextColor={"#808080"}
-            value={userUid}
-            onChangeText={(text) => setUserUid(text)}
-          />
-          <TouchableOpacity onPress={handleSearch}>
-            <FontAwesome name="search" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-        {loading ? (
-          <ActivityIndicator size={34} />
-        ) : error ? (
-          <View>
             <Text
+              style={{ color: "white", fontSize: 35, fontFamily: "HeroBd" }}
+            >
+              SEARCH USER
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Recommendation")}
               style={{
-                textAlign: "center",
-                color: "white",
-                fontFamily: "HeroBd",
-                fontSize: 20,
+                borderColor: "#d24dff",
+                padding: 8,
+                borderRadius: 20,
+                backgroundColor: "#d24dff",
               }}
             >
-              No User Found
-            </Text>
+              <FontAwesome5 name="magic" size={20} color="white" />
+            </TouchableOpacity>
           </View>
-        ) : user ? (
-          <>
-            <View style={{ padding: 10, height: "100%" }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("OtherProfile", {
-                    other_uid: user.uid,
-                    similar: user.similar,
-                  })
-                }
-                key={user.uid}
+          <View style={{ backgroundColor: "#404040", height: 2 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+            }}
+          >
+            <TextInput
+              style={{
+                backgroundColor: "#303030",
+                fontSize: 17,
+                padding: 7,
+                borderRadius: 10,
+                color: "white",
+                fontFamily: "HeroRg",
+                width: "90%",
+              }}
+              placeholder="Enter UID"
+              placeholderTextColor={"#808080"}
+              value={userUid}
+              onChangeText={(text) => setUserUid(text)}
+            />
+            <TouchableOpacity onPress={handleSearch}>
+              <FontAwesome name="search" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+          {loading ? (
+            <ActivityIndicator size={34} />
+          ) : error ? (
+            <View>
+              <Text
                 style={{
-                  padding: 10,
-                  flexDirection: "row",
-                  marginVertical: 10,
-                  backgroundColor: "#202020",
-                  borderRadius: 10,
-                  gap: 20,
-                  alignItems: "center",
+                  textAlign: "center",
+                  color: "white",
+                  fontFamily: "HeroBd",
+                  fontSize: 20,
                 }}
               >
-                <Image
-                  style={{ height: 70, width: 70, borderRadius: 70 }}
-                  source={{ uri: user.profile_image }}
-                />
-                <View>
-                  <Text
-                    style={{
-                      color: "white",
-                      fontFamily: "HeroRg",
-                      fontSize: 18,
-                    }}
-                  >
-                    {user.spotify_display_name}
-                  </Text>
-                  <Text
-                    style={{
-                      color: "#808080",
-                      fontFamily: "HeroRg",
-                      fontSize: 15,
-                    }}
-                  >
-                    {user.email}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 5,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: getColorByNumber(user.similar),
-                        fontFamily: "HeroBd",
-                        fontSize: 18,
-                      }}
-                    >
-                      {user.similar}%
-                    </Text>
+                No User Found
+              </Text>
+            </View>
+          ) : user ? (
+            <>
+              <View style={{ padding: 10, height: "100%" }}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("OtherProfile", {
+                      other_uid: user.uid,
+                      similar: user.similar,
+                    })
+                  }
+                  key={user.uid}
+                  style={{
+                    padding: 10,
+                    flexDirection: "row",
+                    marginVertical: 10,
+                    backgroundColor: "#202020",
+                    borderRadius: 10,
+                    gap: 20,
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    style={{ height: 70, width: 70, borderRadius: 70 }}
+                    source={{ uri: user.profile_image }}
+                  />
+                  <View>
                     <Text
                       style={{
                         color: "white",
@@ -248,18 +219,53 @@ const SearchUser = ({ navigation }) => {
                         fontSize: 18,
                       }}
                     >
-                      Match
+                      {user.spotify_display_name}
                     </Text>
+                    <Text
+                      style={{
+                        color: "#808080",
+                        fontFamily: "HeroRg",
+                        fontSize: 15,
+                      }}
+                    >
+                      {user.email}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 5,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: getColorByNumber(user.similar),
+                          fontFamily: "HeroBd",
+                          fontSize: 18,
+                        }}
+                      >
+                        {user.similar}%
+                      </Text>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "HeroRg",
+                          fontSize: 18,
+                        }}
+                      >
+                        Match
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <></>
-        )}
-      </View>
-    </SafeAreaView>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <></>
+          )}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
